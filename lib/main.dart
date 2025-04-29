@@ -196,6 +196,43 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   )
                   : const SizedBox(),
+            if (_isLoading) const CircularProgressIndicator() else _pokemonData.containsKey('error') ?
+             Text(
+                _pokemonData['error'],
+              style: const TextStyle(color: Color.fromARGB(255, 255, 17, 0)),
+            )
+             : _pokemonData.isNotEmpty ?
+            Column(
+              children: [
+                Image.network(
+                  _pokemonData['sprites']['front_default'],
+                  width: 100,
+                  height: 100,
+                  errorBuilder: (BuildContext context, Object exception,
+                      StackTrace? stackTrace) {
+                    return const Text('Image not available');
+                  },
+                ),
+                Text('Name: ${_pokemonData['name']}'),
+                Text('Height: ${_pokemonData['height']}'),
+                Text('Weight: ${_pokemonData['weight']}'),
+                const Text('Abilities:'),
+                Column(
+                  children: List.generate(_pokemonData['abilities'].length,
+                      (index) {
+                    return Text(
+                        '- ${_pokemonData['abilities'][index]['ability']['name']}');
+                  }),
+                ),
+              ],
+            )
+          
+            
+            
+            
+            
+            : const SizedBox(),
+          
           ],
         ),
       ),
