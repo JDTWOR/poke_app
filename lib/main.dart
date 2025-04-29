@@ -143,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
             if (_isLoading) const CircularProgressIndicator() else _pokemonData.containsKey('error') ?
              Text(
                 _pokemonData['error'],
-              style: const TextStyle(color: Color.fromARGB(255, 102, 35, 30)),
+              style: const TextStyle(color: Color.fromARGB(255, 255, 17, 0)),
             )
              : _pokemonData.isNotEmpty ?
             Column(
