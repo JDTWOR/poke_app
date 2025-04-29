@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ) ,
+      ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -143,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
             if (_isLoading) const CircularProgressIndicator() else _pokemonData.containsKey('error') ?
              Text(
                 _pokemonData['error'],
-              style: const TextStyle(color: Colors.red),
+              style: const TextStyle(color: Color.fromARGB(255, 102, 35, 30)),
             )
              : _pokemonData.isNotEmpty ?
             Column(
