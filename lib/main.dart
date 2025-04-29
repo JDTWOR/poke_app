@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -29,7 +32,7 @@ class MyApp extends StatelessWidget {
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
+      ) ,
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -54,10 +57,43 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  final TextEditingController _controller = TextEditingController();
+  Map<String, dynamic> _pokemonData = {};
+  bool _isLoading = false;
 
-  void _incrementCounter() {
+  Future<void> _fetchPokemonData(String pokemonName) async {
     setState(() {
+      _isLoading = true;
+    });
+    try {
+      final response = await http
+          .get(Uri.parse('https://pokeapi.co/api/v2/pokemon/$pokemonName'));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          _pokemonData = data;
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _pokemonData = {
+            'error': 'Pokemon not found',
+          };
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+        setState(() {
+          _pokemonData = {
+            'error': 'An error occurred',
+          };
+          _isLoading = false;
+        });
+    }
+  }
+
+  /*void _incrementCounter() {
+    setState(() { 
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
       // so that the display can reflect the updated values. If we changed
@@ -65,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
       _counter++;
     });
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -86,37 +122,66 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                controller: _controller,
+                decoration: const InputDecoration(
+                  hintText: 'Enter Pokemon Name',
+                ),
+              ),
             ),
+            ElevatedButton(
+              onPressed: () {
+                _fetchPokemonData(_controller.text.toLowerCase());
+              },
+              child: const Text('Search Pokemon'),
+            ),
+            if (_isLoading) const CircularProgressIndicator() else _pokemonData.containsKey('error') ?
+             Text(
+                _pokemonData['error'],
+              style: const TextStyle(color: Colors.red),
+            )
+             : _pokemonData.isNotEmpty ?
+            Column(
+              children: [
+                Image.network(
+                  _pokemonData['sprites']['front_default'],
+                  width: 100,
+                  height: 100,
+                  errorBuilder: (BuildContext context, Object exception,
+                      StackTrace? stackTrace) {
+                    return const Text('Image not available');
+                  },
+                ),
+                Text('Name: ${_pokemonData['name']}'),
+                Text('Height: ${_pokemonData['height']}'),
+                Text('Weight: ${_pokemonData['weight']}'),
+                const Text('Abilities:'),
+                Column(
+                  children: List.generate(_pokemonData['abilities'].length,
+                      (index) {
+                    return Text(
+                        '- ${_pokemonData['abilities'][index]['ability']['name']}');
+                  }),
+                ),
+              ],
+            )
+          
+            
+            
+            
+            
+            : const SizedBox(),
+           
+             
+            
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
