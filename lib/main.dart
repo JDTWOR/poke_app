@@ -65,25 +65,51 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _isLoading = true;
     });
+
     try {
-      final response = await http.get(
+      final pokemonResponse = await http.get(
         Uri.parse('https://pokeapi.co/api/v2/pokemon/$pokemonName'),
       );
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+
+      if (pokemonResponse.statusCode == 200) {
+        final pokemonData = jsonDecode(pokemonResponse.body);
+
+        final speciesResponse = await http.get(
+          Uri.parse(pokemonData['species']['url']),
+        );
+        final speciesData = jsonDecode(speciesResponse.body);
+        final category =
+            speciesData['genera'].firstWhere(
+              (g) => g['language']['name'] == 'es',
+              orElse: () => {'genus': 'Desconocido'},
+            )['genus'];
+
+        final typeUrl = pokemonData['types'][0]['type']['url'];
+        final typeResponse = await http.get(Uri.parse(typeUrl));
+        final typeData = jsonDecode(typeResponse.body);
+
+        final weaknesses =
+            typeData['damage_relations']['double_damage_from']
+                .map<String>((e) => e['name'] as String)
+                .toList();
+
         setState(() {
-          _pokemonData = data;
+          _pokemonData = {
+            ...pokemonData,
+            'category': category,
+            'weaknesses': weaknesses,
+          };
           _isLoading = false;
         });
       } else {
         setState(() {
-          _pokemonData = {'error': 'Pokemon not found'};
+          _pokemonData = {'error': 'Pokemon no encontrado'};
           _isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
-        _pokemonData = {'error': 'An error occurred'};
+        _pokemonData = {'error': 'Error al obtener los datos'};
         _isLoading = false;
       });
     }
@@ -174,20 +200,109 @@ class _MyHomePageState extends State<MyHomePage> {
                                           const Text('Imagen no disponible'),
                                 ),
                                 const SizedBox(height: 12),
-                                const Divider(thickness: 1),
+                                const Divider(thickness: 2),
                                 Text('Nombre: ${_pokemonData['name']}'),
                                 Text('Altura: ${_pokemonData['height']}'),
                                 Text('Peso: ${_pokemonData['weight']}'),
                                 const SizedBox(height: 8),
-                                const Divider(thickness: 1),
-                                const Text('Habilidades:'),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                const Divider(thickness: 2),
+                                const Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Habilidades:',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
                                   children: List.generate(
                                     _pokemonData['abilities'].length,
-                                    (index) => Text(
-                                      '- ${_pokemonData['abilities'][index]['ability']['name']}',
-                                    ),
+                                    (index) {
+                                      final abilityName =
+                                          _pokemonData['abilities'][index]['ability']['name'];
+                                      return Chip(
+                                        label: Text(abilityName),
+                                        backgroundColor:
+                                            Colors.deepPurple.shade100,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          side: const BorderSide(
+                                            color: Color.fromARGB(
+                                              255,
+                                              73,
+                                              58,
+                                              183,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                const Divider(thickness: 2),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Categoría: ${_pokemonData['category']}',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Tipo(s):',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Wrap(
+                                        spacing: 8,
+                                        children:
+                                            (_pokemonData['types'] as List).map(
+                                              (type) {
+                                                return Chip(
+                                                  label: Text(
+                                                    type['type']['name'],
+                                                  ),
+                                                  backgroundColor:
+                                                      Colors.lightBlue.shade100,
+                                                );
+                                              },
+                                            ).toList(),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      const Divider(thickness: 2),
+                                      Text(
+                                        'Debilidades:',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Wrap(
+                                        spacing: 8,
+                                        children:
+                                            (_pokemonData['weaknesses'] as List)
+                                                .map((w) {
+                                                  return Chip(
+                                                    label: Text(w),
+                                                    backgroundColor:
+                                                        Colors.red.shade100,
+                                                  );
+                                                })
+                                                .toList(),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -195,48 +310,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                       ),
-                    )
-                    : const SizedBox(),
-              if (_isLoading)
-                const CircularProgressIndicator()
-              else
-                _pokemonData.containsKey('error')
-                    ? Text(
-                      _pokemonData['error'],
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 255, 17, 0),
-                      ),
-                    )
-                    : _pokemonData.isNotEmpty
-                    ? Column(
-                      children: [
-                        Image.network(
-                          _pokemonData['sprites']['front_default'],
-                          width: 100,
-                          height: 100,
-                          errorBuilder: (
-                            BuildContext context,
-                            Object exception,
-                            StackTrace? stackTrace,
-                          ) {
-                            return const Text('Image not available');
-                          },
-                        ),
-                        Text('Name: ${_pokemonData['name']}'),
-                        Text('Height: ${_pokemonData['height']}'),
-                        Text('Weight: ${_pokemonData['weight']}'),
-                        const Text('Abilities:'),
-                        Column(
-                          children: List.generate(
-                            _pokemonData['abilities'].length,
-                            (index) {
-                              return Text(
-                                '- ${_pokemonData['abilities'][index]['ability']['name']}',
-                              );
-                            },
-                          ),
-                        ),
-                      ],
                     )
                     : const SizedBox(),
             ],
