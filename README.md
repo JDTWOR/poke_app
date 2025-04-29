@@ -1,16 +1,66 @@
-# poke_app
+# PokeApp - Consumo de API Pública (PokeAPI)
 
-A new Flutter project.
+![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
+![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)
+![PokeAPI](https://img.shields.io/badge/PokeAPI-EF5350?style=for-the-badge&logo=pokemon&logoColor=white)
+![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
 
-## Getting Started
+Una aplicación desarrollada en **Flutter** que consume la **API pública de Pokémon (PokeAPI)** para mostrar información detallada de los Pokémon.
 
-This project is a starting point for a Flutter application.
+## 📌 Características
 
-A few resources to get you started if this is your first Flutter project:
+✔ Consumo de API REST (PokeAPI) usando HTTP  
+✔ Autenticación básica (API Key si es requerida)  
+✔ Manejo de estados con Provider/Bloc/Riverpod  
+✔ Navegación entre pantallas  
+✔ Diseño responsivo con Material 3  
+✔ Pruebas en Postman  
+✔ Control de versiones con Git  
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 🚀 Tecnologías y Conceptos
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+| Concepto            | Tecnología/Herramienta       |
+|---------------------|------------------------------|
+| Desarrollo Nativo   | Kotlin (Android), Swift (iOS)|
+| Desarrollo Híbrido  | Flutter (Dart)               |
+| Framework           | Flutter                      |
+| IDE                 | Android Studio / VS Code     |
+| Pruebas de API      | Postman                      |
+| Control de Versiones| Git + GitHub                 |
+
+## 📦 Instalación
+
+1. Clona el repositorio:
+```bash
+git clone https://github.com/tu-usuario/PokeApp.git
+cd PokeApp
+```
+2. Instala dependencias:
+```bash
+flutter pub get
+```
+3. Ejecuta la app:
+```bash
+flutter run
+```
+
+## Configuracion API
+Configura tu API Key en lib/config/api_config.dart:
+```bash
+const String apiKey = "TU_API_KEY";
+const String baseUrl = "https://pokeapi.co/api/v2/";
+```
+
+📄 Licencia
+Este proyecto está bajo la licencia MIT.
+
+© 2024 - SENA 🎓
+
+## Colaboradores
+- Jhon Deivid Rojas
+- Hernan david cifuentes
+- Samuel Rene Yepes
+- Juan David
+- Jose David
+- Jhon Santamaria
+- Ronald Bejarano
