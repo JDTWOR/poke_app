@@ -118,122 +118,129 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                controller: _controller,
-                decoration: const InputDecoration(
-                  hintText: 'Enter Pokemon Name',
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(
+                  controller: _controller,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter Pokemon Name',
+                  ),
                 ),
               ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _fetchPokemonData(_controller.text.toLowerCase());
-              },
-              child: const Text('Search Pokemon'),
-            ),
-            if (_isLoading)
-              const CircularProgressIndicator()
-            else
-              _pokemonData.containsKey('error')
-                  ? Text(
-                    _pokemonData['error'],
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 102, 35, 30),
-                    ),
-                  )
-                  : _pokemonData.isNotEmpty
-                  ? Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 300),
-                      child: Card(
-                        elevation: 8,
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side: const BorderSide(color: Colors.black),
-                        ),
-                        margin: const EdgeInsets.all(16),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Image.network(
-                                _pokemonData['sprites']['front_default'],
-                                width: 100,
-                                height: 100,
-                                errorBuilder:
-                                    (context, error, stackTrace) =>
-                                        const Text('Imagen no disponible'),
-                              ),
-                              const SizedBox(height: 12),
-                              const Divider(thickness: 1),
-                              Text('Nombre: ${_pokemonData['name']}'),
-                              Text('Altura: ${_pokemonData['height']}'),
-                              Text('Peso: ${_pokemonData['weight']}'),
-                              const SizedBox(height: 8),
-                              const Divider(thickness: 1),
-                              const Text('Habilidades:'),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: List.generate(
-                                  _pokemonData['abilities'].length,
-                                  (index) => Text(
-                                    '- ${_pokemonData['abilities'][index]['ability']['name']}',
+              ElevatedButton(
+                onPressed: () {
+                  _fetchPokemonData(_controller.text.toLowerCase());
+                },
+                child: const Text('Search Pokemon'),
+              ),
+              if (_isLoading)
+                const CircularProgressIndicator()
+              else
+                _pokemonData.containsKey('error')
+                    ? Text(
+                      _pokemonData['error'],
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 102, 35, 30),
+                      ),
+                    )
+                    : _pokemonData.isNotEmpty
+                    ? Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 300),
+                        child: Card(
+                          elevation: 8,
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            side: const BorderSide(color: Colors.black),
+                          ),
+                          margin: const EdgeInsets.all(16),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.network(
+                                  _pokemonData['sprites']['front_default'],
+                                  width: 100,
+                                  height: 100,
+                                  errorBuilder:
+                                      (context, error, stackTrace) =>
+                                          const Text('Imagen no disponible'),
+                                ),
+                                const SizedBox(height: 12),
+                                const Divider(thickness: 1),
+                                Text('Nombre: ${_pokemonData['name']}'),
+                                Text('Altura: ${_pokemonData['height']}'),
+                                Text('Peso: ${_pokemonData['weight']}'),
+                                const SizedBox(height: 8),
+                                const Divider(thickness: 1),
+                                const Text('Habilidades:'),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: List.generate(
+                                    _pokemonData['abilities'].length,
+                                    (index) => Text(
+                                      '- ${_pokemonData['abilities'][index]['ability']['name']}',
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  )
-                  : const SizedBox(),
-            if (_isLoading) const CircularProgressIndicator() else _pokemonData.containsKey('error') ?
-             Text(
-                _pokemonData['error'],
-              style: const TextStyle(color: Color.fromARGB(255, 255, 17, 0)),
-            )
-             : _pokemonData.isNotEmpty ?
-            Column(
-              children: [
-                Image.network(
-                  _pokemonData['sprites']['front_default'],
-                  width: 100,
-                  height: 100,
-                  errorBuilder: (BuildContext context, Object exception,
-                      StackTrace? stackTrace) {
-                    return const Text('Image not available');
-                  },
-                ),
-                Text('Name: ${_pokemonData['name']}'),
-                Text('Height: ${_pokemonData['height']}'),
-                Text('Weight: ${_pokemonData['weight']}'),
-                const Text('Abilities:'),
-                Column(
-                  children: List.generate(_pokemonData['abilities'].length,
-                      (index) {
-                    return Text(
-                        '- ${_pokemonData['abilities'][index]['ability']['name']}');
-                  }),
-                ),
-              ],
-            )
-          
-            
-            
-            
-            
-            : const SizedBox(),
-          
-          ],
+                    )
+                    : const SizedBox(),
+              if (_isLoading)
+                const CircularProgressIndicator()
+              else
+                _pokemonData.containsKey('error')
+                    ? Text(
+                      _pokemonData['error'],
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 255, 17, 0),
+                      ),
+                    )
+                    : _pokemonData.isNotEmpty
+                    ? Column(
+                      children: [
+                        Image.network(
+                          _pokemonData['sprites']['front_default'],
+                          width: 100,
+                          height: 100,
+                          errorBuilder: (
+                            BuildContext context,
+                            Object exception,
+                            StackTrace? stackTrace,
+                          ) {
+                            return const Text('Image not available');
+                          },
+                        ),
+                        Text('Name: ${_pokemonData['name']}'),
+                        Text('Height: ${_pokemonData['height']}'),
+                        Text('Weight: ${_pokemonData['weight']}'),
+                        const Text('Abilities:'),
+                        Column(
+                          children: List.generate(
+                            _pokemonData['abilities'].length,
+                            (index) {
+                              return Text(
+                                '- ${_pokemonData['abilities'][index]['ability']['name']}',
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    )
+                    : const SizedBox(),
+            ],
+          ),
         ),
       ),
     );
