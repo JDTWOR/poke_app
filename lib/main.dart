@@ -66,9 +66,8 @@ class _MyHomePageState extends State<MyHomePage> {
       _isLoading = true;
     });
     try {
-      final response = await http.get(
-        Uri.parse('https://pokeapi.co/api/v2/pokemon/$pokemonName'),
-      );
+      final response = await http
+          .get(Uri.parse('https://pokeapi.co/api/v2/pokemon/$pokemonName'));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
@@ -77,15 +76,19 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       } else {
         setState(() {
-          _pokemonData = {'error': 'Pokemon not found'};
+          _pokemonData = {
+            'error': 'Pokemon not found',
+          };
           _isLoading = false;
         });
       }
     } catch (e) {
-      setState(() {
-        _pokemonData = {'error': 'An error occurred'};
-        _isLoading = false;
-      });
+        setState(() {
+          _pokemonData = {
+            'error': 'An error occurred',
+          };
+          _isLoading = false;
+        });
     }
   }
 
@@ -137,48 +140,45 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               child: const Text('Search Pokemon'),
             ),
-            if (_isLoading)
-              const CircularProgressIndicator()
-            else
-              _pokemonData.containsKey('error')
-                  ? Text(
-                    _pokemonData['error'],
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 255, 17, 0),
-                    ),
-                  )
-                  : _pokemonData.isNotEmpty
-                  ? Column(
-                    children: [
-                      Image.network(
-                        _pokemonData['sprites']['front_default'],
-                        width: 100,
-                        height: 100,
-                        errorBuilder: (
-                          BuildContext context,
-                          Object exception,
-                          StackTrace? stackTrace,
-                        ) {
-                          return const Text('Image not available');
-                        },
-                      ),
-                      Text('Name: ${_pokemonData['name']}'),
-                      Text('Height: ${_pokemonData['height']}'),
-                      Text('Weight: ${_pokemonData['weight']}'),
-                      const Text('Abilities:'),
-                      Column(
-                        children: List.generate(
-                          _pokemonData['abilities'].length,
-                          (index) {
-                            return Text(
-                              '- ${_pokemonData['abilities'][index]['ability']['name']}',
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  )
-                  : const SizedBox(),
+            if (_isLoading) const CircularProgressIndicator() else _pokemonData.containsKey('error') ?
+             Text(
+                _pokemonData['error'],
+              style: const TextStyle(color: Color.fromARGB(255, 255, 17, 0)),
+            )
+             : _pokemonData.isNotEmpty ?
+            Column(
+              children: [
+                Image.network(
+                  _pokemonData['sprites']['front_default'],
+                  width: 100,
+                  height: 100,
+                  errorBuilder: (BuildContext context, Object exception,
+                      StackTrace? stackTrace) {
+                    return const Text('Image not available');
+                  },
+                ),
+                Text('Name: ${_pokemonData['name']}'),
+                Text('Height: ${_pokemonData['height']}'),
+                Text('Weight: ${_pokemonData['weight']}'),
+                const Text('Abilities:'),
+                Column(
+                  children: List.generate(_pokemonData['abilities'].length,
+                      (index) {
+                    return Text(
+                        '- ${_pokemonData['abilities'][index]['ability']['name']}');
+                  }),
+                ),
+              ],
+            )
+          
+            
+            
+            
+            
+            : const SizedBox(),
+           
+             
+            
           ],
         ),
       ),
