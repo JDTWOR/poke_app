@@ -168,6 +168,21 @@ class _MyHomePageState extends State<MyHomePage> {
                         '- ${_pokemonData['abilities'][index]['ability']['name']}');
                   }),
                 ),
+                const Text('types:'),
+                Column(
+                  children: List.generate(_pokemonData['types'].length,
+                      (index) {
+                    return Text(
+                      '- ${_pokemonData['types'][index]['type']['name']}');
+                      }),
+                ),
+                const Text('stats:'),
+                Column(
+                  children: List.generate(_pokemonData['stats'].length, (index) {
+                    return Text(
+                        '- ${_pokemonData['stats'][index]['stat']['name']}: ${_pokemonData['stats'][index]['base_stat']}');
+                      }),
+                ),
               ],
             )
           
