@@ -164,6 +164,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       hintStyle: const TextStyle(color: Colors.grey),
                       prefixIcon: Padding(
                         padding: const EdgeInsets.all(8.0),
+                        child: Image.asset(
+                          'assets/pokeball_icon.png', // Asegúrate de tener esta imagen en assets
+                          width: 24,
+                          height: 24,
+                        ),
                       ),
                       filled: true,
                       fillColor: Colors.white,
