@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:poke_app/pokedex.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -78,11 +79,19 @@ class _MyHomePageState extends State<MyHomePage> {
           Uri.parse(pokemonData['species']['url']),
         );
         final speciesData = jsonDecode(speciesResponse.body);
-        final category =
-            speciesData['genera'].firstWhere(
-              (g) => g['language']['name'] == 'es',
-              orElse: () => {'genus': 'Desconocido'},
-            )['genus'];
+          String category = 'Desconocido';
+          try {
+            final englishGenus = speciesData['genera'].firstWhere(
+              (g) => g['language']['name'] == 'en',
+              orElse: () => null,
+            );
+            if (englishGenus != null) {
+              category = englishGenus['genus'];
+            }
+          } catch (e) {
+            // Fallback si hay algún error
+            category = 'Desconocido';
+          }
 
         final typeUrl = pokemonData['types'][0]['type']['url'];
         final typeResponse = await http.get(Uri.parse(typeUrl));
@@ -135,16 +144,30 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            ListTile(
+              title: const Text('Pokedex'),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const Pokedex())),
+            )
+          ],
+        ),
+      ),
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.menu), 
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
+        ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: SingleChildScrollView(
+        
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
