@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Schedule 1 PokéAPI'),
     );
   }
 }
@@ -143,28 +143,101 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold(
+    var scaffold = Scaffold(
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
             ListTile(
-              title: const Text('Pokedex'),
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const Pokedex())),
-            )
+              title: const Text('Pokédex'),
+        
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const Pokedex())),
+              ),
+              
           ],
         ),
       ),
       appBar: AppBar(
         leading: Builder(
           builder: (context) => IconButton(
-            icon: const Icon(Icons.menu), 
+            icon: const Icon(Icons.menu),
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        flexibleSpace: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            return Stack(
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.red,
+                        Colors.red,
+                        Colors.white,
+                        Colors.white,
+                      ],
+                      stops: [0.0, 0.5, 0.5, 1.0],
+                    ),
+                    border: Border(
+                      bottom: BorderSide(color: Colors.black, width: 2),
+                    ),
+                  ),
+                ),
+                Center(
+                  child: Container(
+                    width: constraints.maxHeight * 0.5,
+                    height: constraints.maxHeight * 0.5,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.black, width: 2),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: constraints.maxHeight * 0.7,
+                  top: 0,
+                  bottom: 0,
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.yellow,
+                          width: 3,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                        // Opcional: añadir un fondo si quieres que el borde destaque más
+                        // ignore: deprecated_member_use
+                        color: Colors.white.withOpacity(0.7),
+                      ),
+                      child: Text(
+                        widget.title,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          // Opcional: añadir sombra al texto para mayor legibilidad
+                          shadows: [
+                            Shadow(
+                              blurRadius: 2.0,
+                              color: Color.fromARGB(120, 0, 0, 0),
+                              offset: Offset(1.0, 1.0),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         
@@ -406,5 +479,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+    return scaffold;
   }
 }
