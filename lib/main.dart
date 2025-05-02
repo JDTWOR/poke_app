@@ -333,7 +333,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                SizedBox(
-                                  width: 210, 
+                                  width: 270, 
                                   height: 160,
                                   child: Stack(
                                     alignment: Alignment.center,
@@ -344,8 +344,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                         bottom: 0,
                                         child: Image.asset(
                                           'assets/battle_grass.png',
-                                          width: 230, 
-                                          height: 120,
+                                          width: 300, 
+                                          height: 90,
                                           fit: BoxFit.contain,
                                         ),
                                       ),
@@ -354,7 +354,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         bottom: 25,
                                         child: Image.network(
                                           _pokemonData['sprites']['front_default'],
-                                          width: 155, 
+                                          width: 130, 
                                           height: 110,
                                           fit: BoxFit.contain,
                                           errorBuilder:
