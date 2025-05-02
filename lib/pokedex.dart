@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'pokemon_detail.dart';
 
 class Pokedex extends StatefulWidget {
   const Pokedex({super.key});
@@ -32,7 +33,8 @@ class _PokedexState extends State<Pokedex> {
   }
 
   void _scrollListener() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
       if (!_isLoading && _hasMore) {
         _fetchPokemonList();
       }
@@ -48,15 +50,17 @@ class _PokedexState extends State<Pokedex> {
 
     try {
       final response = await http.get(
-        Uri.parse('https://pokeapi.co/api/v2/pokemon?offset=$_offset&limit=$_limit'),
+        Uri.parse(
+          'https://pokeapi.co/api/v2/pokemon?offset=$_offset&limit=$_limit',
+        ),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final List<dynamic> results = data['results'];
-        
+
         List<Map<String, dynamic>> newPokemonList = [];
-        
+
         for (var pokemon in results) {
           final pokemonResponse = await http.get(Uri.parse(pokemon['url']));
           if (pokemonResponse.statusCode == 200) {
@@ -66,6 +70,10 @@ class _PokedexState extends State<Pokedex> {
               'name': pokemonData['name'],
               'types': pokemonData['types'],
               'sprite': pokemonData['sprites']['front_default'],
+              'height': pokemonData['height'],
+              'weight': pokemonData['weight'],
+              'abilities': pokemonData['abilities'],
+              'stats': pokemonData['stats'],
             });
           }
         }
@@ -143,130 +151,144 @@ class _PokedexState extends State<Pokedex> {
         title: const Text('Pokédex'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: _pokemonList.isEmpty && _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _pokemonList.isEmpty
+      body:
+          _pokemonList.isEmpty && _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _pokemonList.isEmpty
               ? const Center(child: Text('No se encontraron Pokémon'))
               : GridView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.all(8),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.75,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                  ),
-                  itemCount: _pokemonList.length + (_hasMore ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index >= _pokemonList.length) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
+                controller: _scrollController,
+                padding: const EdgeInsets.all(8),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.75,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                ),
+                itemCount: _pokemonList.length + (_hasMore ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index >= _pokemonList.length) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-                    final pokemon = _pokemonList[index];
-                    final primaryType = pokemon['types'][0]['type']['name'];
-                    final typeColor = _getTypeColor(primaryType);
+                  final pokemon = _pokemonList[index];
+                  final primaryType = pokemon['types'][0]['type']['name'];
+                  final typeColor = _getTypeColor(primaryType);
 
-                    return Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          // Aquí podrías navegar a los detalles del Pokémon
-                          // utilizando el ID o nombre
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                // ignore: deprecated_member_use
-                                typeColor.withOpacity(0.7),
-                                Colors.white,
-                              ],
-                            ),
+                  return Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => PokemonDetails(pokemon: pokemon),
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                '#${pokemon['id'].toString().padLeft(3, '0')}',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                              Expanded(
-                                child: Image.network(
-                                  pokemon['sprite'],
-                                  fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(Icons.broken_image, size: 60),
-                                ),
-                              ),
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.symmetric(vertical: 8),
-                                decoration: BoxDecoration(
-                                  // ignore: deprecated_member_use
-                                  color: Colors.white.withOpacity(0.8),
-                                  borderRadius: const BorderRadius.only(
-                                    bottomLeft: Radius.circular(15),
-                                    bottomRight: Radius.circular(15),
-                                  ),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      pokemon['name'].toString().toUpperCase(),
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        ...List.generate(
-                                          pokemon['types'].length,
-                                          (i) {
-                                            final type = pokemon['types'][i]['type']['name'];
-                                            return Container(
-                                              margin: const EdgeInsets.symmetric(horizontal: 2),
-                                              padding: const EdgeInsets.symmetric(
-                                                horizontal: 8,
-                                                vertical: 2,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: _getTypeColor(type),
-                                                borderRadius: BorderRadius.circular(10),
-                                              ),
-                                              child: Text(
-                                                type,
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
+                        );
+                      },
+
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              // ignore: deprecated_member_use
+                              typeColor.withOpacity(0.7),
+                              Colors.white,
                             ],
                           ),
                         ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              '#${pokemon['id'].toString().padLeft(3, '0')}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            Expanded(
+                              child: Image.network(
+                                pokemon['sprite'],
+                                fit: BoxFit.contain,
+                                errorBuilder:
+                                    (context, error, stackTrace) => const Icon(
+                                      Icons.broken_image,
+                                      size: 60,
+                                    ),
+                              ),
+                            ),
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
+                                // ignore: deprecated_member_use
+                                color: Colors.white.withOpacity(0.8),
+                                borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(15),
+                                  bottomRight: Radius.circular(15),
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    pokemon['name'].toString().toUpperCase(),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ...List.generate(pokemon['types'].length, (
+                                        i,
+                                      ) {
+                                        final type =
+                                            pokemon['types'][i]['type']['name'];
+                                        return Container(
+                                          margin: const EdgeInsets.symmetric(
+                                            horizontal: 2,
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 2,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: _getTypeColor(type),
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            type,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
+              ),
     );
   }
 }
