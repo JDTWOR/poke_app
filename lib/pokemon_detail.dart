@@ -1,27 +1,98 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class PokemonDetails extends StatelessWidget {
+class PokemonDetails extends StatefulWidget {
   final Map<String, dynamic> pokemon;
 
   const PokemonDetails({super.key, required this.pokemon});
 
-  String _capitalize(String s) => s[0].toUpperCase() + s.substring(1);
+  @override
+  State<PokemonDetails> createState() => _PokemonDetailsState();
+}
+
+class _PokemonDetailsState extends State<PokemonDetails> {
+  List<String> weaknesses = [];
+  bool isLoading = true;
+  String errorMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchWeaknesses();
+  }
+
+  Future<void> fetchWeaknesses() async {
+    Set<String> result = {};
+
+    for (var type in widget.pokemon['types']) {
+      final typeName = type['type']['name'];
+      try {
+        final response = await http.get(Uri.parse('https://pokeapi.co/api/v2/type/$typeName'));
+
+        if (response.statusCode == 200) {
+          final data = json.decode(response.body);
+          final List<dynamic> weakTypes = data['damage_relations']['double_damage_from'];
+          for (var t in weakTypes) {
+            result.add(t['name']);
+          }
+        } else {
+          setState(() {
+            errorMessage = 'Error al obtener debilidades de tipo $typeName';
+          });
+          return;
+        }
+      } catch (e) {
+        setState(() {
+          errorMessage = 'Error de conexión. Intenta nuevamente.';
+        });
+        return;
+      }
+    }
+
+    setState(() {
+      weaknesses = result.toList();
+      isLoading = false;
+    });
+  }
+
+  Color getColorForType(String type) {
+    final Map<String, Color> typeColors = {
+      'fire': Colors.redAccent,
+      'water': Colors.blueAccent,
+      'grass': Colors.green,
+      'electric': Colors.yellow.shade700,
+      'ice': Colors.lightBlue,
+      'flying': Colors.blueGrey,
+      'psychic': Colors.pinkAccent,
+      'fighting': Colors.brown,
+      'ground': Colors.orange,
+      'poison': Colors.purple,
+      'rock': Colors.grey,
+      'ghost': Colors.indigo,
+      'dragon': Colors.indigoAccent,
+      'dark': Colors.black54,
+      'steel': Colors.blueGrey.shade300,
+      'fairy': Colors.pink.shade200,
+      'bug': Colors.lightGreen,
+      'normal': Colors.grey.shade400,
+    };
+
+    return typeColors[type.toLowerCase()] ?? Colors.grey;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final types = pokemon['types'];
-    final abilities = pokemon['abilities'] ?? [];
-    final stats = pokemon['stats'] ?? [];
+    final pokemon = widget.pokemon;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('${_capitalize(pokemon['name'])} N.º ${pokemon['id'].toString().padLeft(3, '0')}'),
-        backgroundColor: Colors.green.shade700,
+        title: Text('${pokemon['name']} N.º ${pokemon['id']}'),
+        backgroundColor: Colors.green,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Imagen
             Image.network(
@@ -30,7 +101,6 @@ class PokemonDetails extends StatelessWidget {
               fit: BoxFit.contain,
             ),
             const SizedBox(height: 16),
-            const SizedBox(height: 24),
 
             // Ficha técnica
             Container(
@@ -52,7 +122,7 @@ class PokemonDetails extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _infoTile('Habilidad', _capitalize(abilities[0]['ability']['name'])),
+                      _infoTile('Habilidad', _capitalize(pokemon['abilities'][0]['ability']['name'])),
                       _infoTile('Género', '♂ ♀'), // Puedes personalizarlo si tienes datos
                     ],
                   ),
@@ -66,17 +136,37 @@ class PokemonDetails extends StatelessWidget {
             _sectionTitle('Tipo'),
             Wrap(
               spacing: 10,
-              children: types.map<Widget>((typeData) {
+              children: pokemon['types'].map<Widget>((typeData) {
                 final type = _capitalize(typeData['type']['name']);
                 return Chip(label: Text(type));
               }).toList(),
             ),
 
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
+
+            // Debilidades
+            _sectionTitle('Debilidad'),
+            isLoading
+                ? const CircularProgressIndicator()
+                : errorMessage.isNotEmpty
+                    ? Text(errorMessage, style: TextStyle(color: Colors.red))
+                    : weaknesses.isEmpty
+                        ? const Text('No se encontraron debilidades.')
+                        : Wrap(
+                            spacing: 10,
+                            children: weaknesses.map((type) {
+                              return Chip(
+                                label: Text(type[0].toUpperCase() + type.substring(1)),
+                                backgroundColor: getColorForType(type),
+                              );
+                            }).toList(),
+                          ),
+
+            const SizedBox(height: 20),
 
             // Estadísticas base
             _sectionTitle('Puntos de Base'),
-            ...stats.map((stat) {
+            ...pokemon['stats'].map((stat) {
               final name = _capitalize(stat['stat']['name']);
               final value = stat['base_stat'];
               return Padding(
@@ -99,19 +189,6 @@ class PokemonDetails extends StatelessWidget {
               );
             }),
 
-            const SizedBox(height: 24),
-
-            // Debilidades (puedes implementarlo después con más lógica)
-            _sectionTitle('Debilidad'),
-            Wrap(
-              spacing: 10,
-              children: const [
-                Chip(label: Text('Fuego'), backgroundColor: Colors.redAccent),
-                Chip(label: Text('Hielo'), backgroundColor: Colors.lightBlue),
-                Chip(label: Text('Volador'), backgroundColor: Colors.blueGrey),
-                Chip(label: Text('Psíquico'), backgroundColor: Colors.pinkAccent),
-              ],
-            ),
           ],
         ),
       ),
@@ -140,4 +217,6 @@ class PokemonDetails extends StatelessWidget {
       ),
     );
   }
+
+  String _capitalize(String s) => s[0].toUpperCase() + s.substring(1);
 }
