@@ -178,18 +178,63 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     var scaffold = Scaffold(
+  backgroundColor: Color.fromARGB(255, 25, 215, 240), // 👈 Aquí va el color de fondo
+
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
             ListTile(
-              title: const Text('Pokédex'),
+  tileColor: const Color.fromARGB(255, 255, 255, 255), // Fondo suave para el botón
+  shape: RoundedRectangleBorder( // Bordes redondeados
+    borderRadius: BorderRadius.circular(12),
+  ),
+  leading: Icon(Icons.catching_pokemon, color: Colors.redAccent), // Ícono al lado
+  title: const Text(
+    'Explorar Pokédex',
+    style: TextStyle(
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+      color: Colors.redAccent,
+    ),
+  ),
+  onTap: () => Navigator.of(context).push(
+    MaterialPageRoute(builder: (context) => const Pokedex()),
+  ),
+),
+// 👇 Aquí agregas los nombres como simples textos
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  child: Text(
+    'Integrantes del grupo:',
+    style: TextStyle(fontWeight: FontWeight.bold),
+  ),
+),
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  child: Text('• Jhon Jairo Santamaria Porras'),
+),
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  child: Text('• Hernan David Cifuentes Arenas'),
+),
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  child: Text('• John Deivy Rojas Rodriguez'),
+),
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  child: Text('• Samuel Rene Yepes Rivera'),
+),
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  child: Text('• Jose David Hernandez Navaja'),
+),
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  child: Text('• Juan David Castro Villarreal'),
+),
 
-              onTap:
-                  () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const Pokedex()),
-                  ),
-            ),
           ],
         ),
       ),
@@ -211,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.red,
+                        Color.from(alpha: 1, red: 0.78, green: 0.125, blue: 0.125),
                         Colors.red,
                         Colors.white,
                         Colors.white,
@@ -306,14 +351,14 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: const Color.fromARGB(255, 255, 255, 255),
                       contentPadding: const EdgeInsets.symmetric(
                         vertical: 14.0,
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30.0),
                         borderSide: BorderSide(
-                          color: Colors.deepPurple.shade100,
+                          color: const Color.fromARGB(255, 218, 12, 12),
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
