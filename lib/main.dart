@@ -372,6 +372,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                 Text('Nombre: ${_pokemonData['name']}'),
                                 Text('Altura: ${_pokemonData['height']}'),
                                 Text('Peso: ${_pokemonData['weight']}'),
+                                const Text('estadisticas:'),
+                                Column(
+                                  children: List.generate(_pokemonData['stats'].length, (index) {
+                                    return Text(
+                                        '- ${_pokemonData['stats'][index]['stat']['name']}: ${_pokemonData['stats'][index]['base_stat']}');
+                                      }),
+                                ),
                                 const SizedBox(height: 8),
                                 const Divider(thickness: 2),
                                 const Align(
