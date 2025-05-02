@@ -62,6 +62,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _controller = TextEditingController();
   Map<String, dynamic> _pokemonData = {};
   bool _isLoading = false;
+  List<String> _pokemonRecommendations = [];
+  String _currentSearchText = '';
 
   Future<void> _fetchPokemonData(String pokemonName) async {
     setState(() {
@@ -124,6 +126,37 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
   }
+
+  Future<void> _fetchPokemonRecommendations(String searchText) async {
+    if (searchText.isEmpty) {
+      setState(() {
+        _pokemonRecommendations = [];
+      });
+      return;
+    }
+
+    final response = await http.get(Uri.parse('https://pokeapi.co/api/v2/pokemon?limit=10000'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final List<String> allPokemonNames = List<String>.from(
+        data['results'].map((pokemon) => pokemon['name']),
+      );
+
+      final List<String> recommendations = allPokemonNames
+          .where((name) => name.startsWith(searchText.toLowerCase()))
+          .toList();
+
+      setState(() {
+        _pokemonRecommendations = recommendations;
+      });
+    } else {
+      setState(() {
+        _pokemonRecommendations = ['Error al cargar recomendaciones'];
+      });
+    }
+  }
+
+
 
   /*void _incrementCounter() {
     setState(() { 
@@ -255,6 +288,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     vertical: 10,
                   ),
                   child: TextField(
+                    onChanged: (text) {
+                      _currentSearchText = text;
+                      _fetchPokemonRecommendations(text);
+                    },
                     controller: _controller,
                     style: const TextStyle(color: Colors.black),
                     decoration: InputDecoration(
@@ -297,6 +334,37 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                   ),
+                ),
+              ),
+              if (_pokemonRecommendations.isNotEmpty)
+              SizedBox(
+                height: 100, 
+                child: ListView.builder(
+                  itemCount: _pokemonRecommendations.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        setState(() {
+                          _controller.text = _pokemonRecommendations[index];
+                          _currentSearchText = _pokemonRecommendations[index];
+                          _pokemonRecommendations = []; // Clear recommendations after selection
+                        });
+                        _fetchPokemonData(_controller.text.toLowerCase());
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 5),
+                        child: Text(
+                          _pokemonRecommendations[index],
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500
+                              ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
               ElevatedButton(
