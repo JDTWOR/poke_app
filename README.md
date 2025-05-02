@@ -60,7 +60,7 @@ Este proyecto está bajo la licencia MIT.
 - Jhon Deivid Rojas
 - Hernan david cifuentes
 - Samuel Rene Yepes
-- Juan David
+- Juan David Castro Villarreal
 - Jose David Hernandez Navaja
 - Jhon Santamaria
 - Ronald Bejarano
