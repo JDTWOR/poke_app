@@ -331,7 +331,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                SizedBox(
-                                  width: 200, // Aumentamos el tamaño del contenedor
+                                  width: 210, 
                                   height: 160,
                                   child: Stack(
                                     alignment: Alignment.center,
@@ -342,7 +342,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         bottom: 0,
                                         child: Image.asset(
                                           'assets/battle_grass.png',
-                                          width: 240, // Más grande
+                                          width: 230, 
                                           height: 120,
                                           fit: BoxFit.contain,
                                         ),
@@ -352,7 +352,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         bottom: 25,
                                         child: Image.network(
                                           _pokemonData['sprites']['front_default'],
-                                          width: 150, // Más grande
+                                          width: 155, 
                                           height: 110,
                                           fit: BoxFit.contain,
                                           errorBuilder: (context, error, stackTrace) =>
