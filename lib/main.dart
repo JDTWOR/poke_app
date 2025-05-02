@@ -438,7 +438,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                                 const SizedBox(height: 12),
                                  const Divider(thickness: 2),
-                                 Text('Generacion: ${() {
+                                 Text('Región: ${() {
                                       switch (_pokemonData['id']) {
                                         case int id when id >= 1 && id <= 151:
                                           return 'Kanto';
@@ -462,9 +462,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                           return 'Desconocida';
                                       }
                                     }()}'),
-
-                                
-                                Text('Generacion: ${_pokemonData['id']}'),
                                 
                                 Text('Nombre: ${_pokemonData['name']}'),
                                 Text('Altura: ${_pokemonData['height']}'),
