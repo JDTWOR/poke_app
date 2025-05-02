@@ -61,6 +61,6 @@ Este proyecto está bajo la licencia MIT.
 - Hernan david cifuentes
 - Samuel Rene Yepes
 - Juan David
-- Jose David
+- Jose David Hernandez Navaja
 - Jhon Santamaria
 - Ronald Bejarano
