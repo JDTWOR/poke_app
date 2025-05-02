@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:poke_app/pokedex.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'PokeAPI Schedule 1',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -79,19 +80,19 @@ class _MyHomePageState extends State<MyHomePage> {
           Uri.parse(pokemonData['species']['url']),
         );
         final speciesData = jsonDecode(speciesResponse.body);
-          String category = 'Desconocido';
-          try {
-            final englishGenus = speciesData['genera'].firstWhere(
-              (g) => g['language']['name'] == 'en',
-              orElse: () => null,
-            );
-            if (englishGenus != null) {
-              category = englishGenus['genus'];
-            }
-          } catch (e) {
-            // Fallback si hay algún error
-            category = 'Desconocido';
+        String category = 'Desconocido';
+        try {
+          final englishGenus = speciesData['genera'].firstWhere(
+            (g) => g['language']['name'] == 'en',
+            orElse: () => null,
+          );
+          if (englishGenus != null) {
+            category = englishGenus['genus'];
           }
+        } catch (e) {
+          // Fallback si hay algún error
+          category = 'Desconocido';
+        }
 
         final typeUrl = pokemonData['types'][0]['type']['url'];
         final typeResponse = await http.get(Uri.parse(typeUrl));
@@ -150,20 +151,22 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             ListTile(
               title: const Text('Pokédex'),
-        
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const Pokedex())),
-              ),
-              
+
+              onTap:
+                  () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const Pokedex()),
+                  ),
+            ),
           ],
         ),
       ),
       appBar: AppBar(
         leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
+          builder:
+              (context) => IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
         ),
         flexibleSpace: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
@@ -204,12 +207,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   bottom: 0,
                   child: Center(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
                       decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.yellow,
-                          width: 3,
-                        ),
+                        border: Border.all(color: Colors.yellow, width: 3),
                         borderRadius: BorderRadius.circular(8),
                         // Opcional: añadir un fondo si quieres que el borde destaque más
                         // ignore: deprecated_member_use
@@ -240,7 +243,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       body: SingleChildScrollView(
-        
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -330,8 +332,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                               SizedBox(
-                                  width: 210, 
+                                SizedBox(
+                                  width: 210,
                                   height: 160,
                                   child: Stack(
                                     alignment: Alignment.center,
@@ -342,7 +344,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         bottom: 0,
                                         child: Image.asset(
                                           'assets/battle_grass.png',
-                                          width: 230, 
+                                          width: 230,
                                           height: 120,
                                           fit: BoxFit.contain,
                                         ),
@@ -352,11 +354,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                         bottom: 25,
                                         child: Image.network(
                                           _pokemonData['sprites']['front_default'],
-                                          width: 155, 
+                                          width: 155,
                                           height: 110,
                                           fit: BoxFit.contain,
-                                          errorBuilder: (context, error, stackTrace) =>
-                                              const Text('Imagen no disponible'),
+                                          errorBuilder:
+                                              (context, error, stackTrace) =>
+                                                  const Text(
+                                                    'Imagen no disponible',
+                                                  ),
                                         ),
                                       ),
                                     ],
