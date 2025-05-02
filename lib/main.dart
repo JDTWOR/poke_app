@@ -368,9 +368,36 @@ class _MyHomePageState extends State<MyHomePage> {
                                     ],
                                   ),
                                 ),
-
                                 const SizedBox(height: 12),
-                                const Divider(thickness: 2),
+                                 const Divider(thickness: 2),
+                                 Text('Generacion: ${() {
+                                      switch (_pokemonData['id']) {
+                                        case int id when id >= 1 && id <= 151:
+                                          return 'Kanto';
+                                        case int id when id >= 152 && id <= 251:
+                                          return 'Johto';
+                                        case int id when id >= 252 && id <= 386:
+                                          return 'Hoenn';
+                                        case int id when id >= 387 && id <= 493:
+                                          return 'Sinnoh';
+                                        case int id when id >= 494 && id <= 649:
+                                          return 'Unova';
+                                        case int id when id >= 650 && id <= 721:
+                                          return 'Kalos';
+                                        case int id when id >= 722 && id <= 809:
+                                          return 'Alola';
+                                        case int id when id >= 899 && id <= 905:
+                                          return 'Galar';
+                                        case int id when id >= 906 && id <= 1025:
+                                          return 'Paldea';
+                                        default:
+                                          return 'Desconocida';
+                                      }
+                                    }()}'),
+
+                                
+                                Text('Generacion: ${_pokemonData['id']}'),
+                                
                                 Text('Nombre: ${_pokemonData['name']}'),
                                 Text('Altura: ${_pokemonData['height']}'),
                                 Text('Peso: ${_pokemonData['weight']}'),
