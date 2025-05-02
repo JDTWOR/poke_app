@@ -338,7 +338,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     children: [
                                       // Imagen del círculo (grass)
                                       Positioned(
-                                        left: -70,
+                                        left: -60,
                                         bottom: 0,
                                         child: Image.asset(
                                           'assets/battle_grass.png',
