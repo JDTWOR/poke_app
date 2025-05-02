@@ -338,15 +338,19 @@ class _MyHomePageState extends State<MyHomePage> {
                                   child: Stack(
                                     alignment: Alignment.center,
                                     children: [
-                                      // Imagen del círculo (grass)
+                                      // sprite del suelo(grass)
                                       Positioned(
                                         left: -30,
                                         bottom: 0,
-                                        child: Image.asset(
-                                          'assets/battle_grass.png',
-                                          width: 300, 
-                                          height: 90,
-                                          fit: BoxFit.contain,
+                                        child: Transform.scale(
+                                          scaleY: 1.8,
+                                          scaleX: 1.8, // Escala horizontal
+                                          child: Image.asset(
+                                            'assets/battle_grass.png',
+                                            width: 300, 
+                                            height: 110,
+                                            fit: BoxFit.contain,
+                                          ),
                                         ),
                                       ),
                                       // Sprite del Pokémon
@@ -354,19 +358,17 @@ class _MyHomePageState extends State<MyHomePage> {
                                         bottom: 25,
                                         child: Image.network(
                                           _pokemonData['sprites']['front_default'],
-                                          width: 130, 
-                                          height: 110,
+                                          width: 190, 
+                                          height: 130,
                                           fit: BoxFit.contain,
-                                          errorBuilder:
-                                              (context, error, stackTrace) =>
-                                                  const Text(
-                                                    'Imagen no disponible',
-                                                  ),
+                                          errorBuilder: (context, error, stackTrace) =>
+                                            const Text('Imagen no disponible'),
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
+
                                 const SizedBox(height: 12),
                                 const Divider(thickness: 2),
                                 Text('Nombre: ${_pokemonData['name']}'),
