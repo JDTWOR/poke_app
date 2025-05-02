@@ -150,7 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             ListTile(
-  tileColor: Colors.red[50], // Fondo suave para el botón
+  tileColor: const Color.fromARGB(255, 255, 255, 255), // Fondo suave para el botón
   shape: RoundedRectangleBorder( // Bordes redondeados
     borderRadius: BorderRadius.circular(12),
   ),
@@ -166,6 +166,26 @@ class _MyHomePageState extends State<MyHomePage> {
   onTap: () => Navigator.of(context).push(
     MaterialPageRoute(builder: (context) => const Pokedex()),
   ),
+),
+// 👇 Aquí agregas los nombres como simples textos
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  child: Text(
+    'Integrantes del grupo:',
+    style: TextStyle(fontWeight: FontWeight.bold),
+  ),
+),
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  child: Text('• Jhon Jairo Santamaria Porras'),
+),
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  child: Text('• Hernan David Cifuentes Arenas'),
+),
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  child: Text('• Juan Agogo'),
 ),
 
           ],
