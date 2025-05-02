@@ -331,36 +331,37 @@ class _MyHomePageState extends State<MyHomePage> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                SizedBox(
-                                width: 160,
-                                height: 130,
-                                child: Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    // Imagen del círculo (grass)
-                                    Positioned(
-                                      bottom: 0,
-                                      child: Image.asset(
-                                        'assets/battle_grass.png',
-                                        width: 190,
-                                        height: 50,
-                                        fit: BoxFit.contain,
+                                  width: 210, 
+                                  height: 160,
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      // Imagen del círculo (grass)
+                                      Positioned(
+                                        left: -60,
+                                        bottom: 0,
+                                        child: Image.asset(
+                                          'assets/battle_grass.png',
+                                          width: 230, 
+                                          height: 120,
+                                          fit: BoxFit.contain,
+                                        ),
                                       ),
-                                    ),
-                                    // Sprite del Pokémon
-                                    Positioned(
-                                      bottom: 20,
-                                      child: Image.network(
-                                        _pokemonData['sprites']['front_default'],
-                                        width: 120,
-                                        height: 80,
-                                        fit: BoxFit.contain,
-                                        errorBuilder: (context, error, stackTrace) =>
-                                            const Text('Imagen no disponible'),
+                                      // Sprite del Pokémon
+                                      Positioned(
+                                        bottom: 25,
+                                        child: Image.network(
+                                          _pokemonData['sprites']['front_default'],
+                                          width: 155, 
+                                          height: 110,
+                                          fit: BoxFit.contain,
+                                          errorBuilder: (context, error, stackTrace) =>
+                                              const Text('Imagen no disponible'),
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
                                 const SizedBox(height: 12),
                                 const Divider(thickness: 2),
                                 Text('Nombre: ${_pokemonData['name']}'),
