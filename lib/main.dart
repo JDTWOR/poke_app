@@ -150,13 +150,24 @@ class _MyHomePageState extends State<MyHomePage> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             ListTile(
-              title: const Text('Pokédex'),
+  tileColor: Colors.red[50], // Fondo suave para el botón
+  shape: RoundedRectangleBorder( // Bordes redondeados
+    borderRadius: BorderRadius.circular(12),
+  ),
+  leading: Icon(Icons.catching_pokemon, color: Colors.redAccent), // Ícono al lado
+  title: const Text(
+    'Explorar Pokédex',
+    style: TextStyle(
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+      color: Colors.redAccent,
+    ),
+  ),
+  onTap: () => Navigator.of(context).push(
+    MaterialPageRoute(builder: (context) => const Pokedex()),
+  ),
+),
 
-              onTap:
-                  () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const Pokedex()),
-                  ),
-            ),
           ],
         ),
       ),
@@ -178,7 +189,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.red,
+                        Color.from(alpha: 1, red: 0.78, green: 0.125, blue: 0.125),
                         Colors.red,
                         Colors.white,
                         Colors.white,
