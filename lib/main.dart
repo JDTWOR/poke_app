@@ -145,6 +145,8 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     var scaffold = Scaffold(
+  backgroundColor: Color.fromARGB(255, 25, 215, 240), // 👈 Aquí va el color de fondo
+
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -185,7 +187,19 @@ const Padding(
 ),
 const Padding(
   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-  child: Text('• Juan Agogo'),
+  child: Text('• John Deivy Rojas Rodriguez'),
+),
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  child: Text('• Samuel Rene Yepes Rivera'),
+),
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  child: Text('• Jose David Hernandez Navaja'),
+),
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  child: Text('• Juan David Castro Villarreal'),
 ),
 
           ],
@@ -300,14 +314,14 @@ const Padding(
                         ),
                       ),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: const Color.fromARGB(255, 255, 255, 255),
                       contentPadding: const EdgeInsets.symmetric(
                         vertical: 14.0,
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30.0),
                         borderSide: BorderSide(
-                          color: Colors.deepPurple.shade100,
+                          color: const Color.fromARGB(255, 218, 12, 12),
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
