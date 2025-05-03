@@ -178,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     var scaffold = Scaffold(
-  backgroundColor: Color.fromARGB(255, 25, 215, 240), // 👈 Aquí va el color de fondo
+  backgroundColor: Color.fromARGB(255, 163, 26, 26), //  Aquí va el color de fondo
 
       drawer: Drawer(
         child: ListView(
@@ -202,7 +202,7 @@ class _MyHomePageState extends State<MyHomePage> {
     MaterialPageRoute(builder: (context) => const Pokedex()),
   ),
 ),
-// 👇 Aquí agregas los nombres como simples textos
+//  Aquí agregas los nombres como simples textos
 const Padding(
   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
   child: Text(
@@ -220,7 +220,7 @@ const Padding(
 ),
 const Padding(
   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-  child: Text('• John Deivy Rojas Rodriguez'),
+  child: Text('• Jhon Deivid Rojas Rodriguez'),
 ),
 const Padding(
   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
