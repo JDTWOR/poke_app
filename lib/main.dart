@@ -235,6 +235,10 @@ const Padding(
   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
   child: Text('• Juan David Castro Villarreal'),
 ),
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  child: Text('• Ronal Bejarano Barbosa'),
+),
 
           ],
         ),
