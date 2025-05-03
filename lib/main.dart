@@ -135,16 +135,19 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
-    final response = await http.get(Uri.parse('https://pokeapi.co/api/v2/pokemon?limit=10000'));
+    final response = await http.get(
+      Uri.parse('https://pokeapi.co/api/v2/pokemon?limit=10000'),
+    );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final List<String> allPokemonNames = List<String>.from(
         data['results'].map((pokemon) => pokemon['name']),
       );
 
-      final List<String> recommendations = allPokemonNames
-          .where((name) => name.startsWith(searchText.toLowerCase()))
-          .toList();
+      final List<String> recommendations =
+          allPokemonNames
+              .where((name) => name.startsWith(searchText.toLowerCase()))
+              .toList();
 
       setState(() {
         _pokemonRecommendations = recommendations;
@@ -155,8 +158,6 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
   }
-
-
 
   /*void _incrementCounter() {
     setState(() { 
@@ -337,36 +338,39 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               if (_pokemonRecommendations.isNotEmpty)
-              SizedBox(
-                height: 100, 
-                child: ListView.builder(
-                  itemCount: _pokemonRecommendations.length,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () {
-                        setState(() {
-                          _controller.text = _pokemonRecommendations[index];
-                          _currentSearchText = _pokemonRecommendations[index];
-                          _pokemonRecommendations = []; // Clear recommendations after selection
-                        });
-                        _fetchPokemonData(_controller.text.toLowerCase());
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 5),
-                        child: Text(
-                          _pokemonRecommendations[index],
-                          style: TextStyle(
+                SizedBox(
+                  height: 100,
+                  child: ListView.builder(
+                    itemCount: _pokemonRecommendations.length,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () {
+                          setState(() {
+                            _controller.text = _pokemonRecommendations[index];
+                            _currentSearchText = _pokemonRecommendations[index];
+                            _pokemonRecommendations =
+                                []; // Clear recommendations after selection
+                          });
+                          _fetchPokemonData(_controller.text.toLowerCase());
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 5,
+                          ),
+                          child: Text(
+                            _pokemonRecommendations[index],
+                            style: TextStyle(
                               fontSize: 16,
                               color: Colors.black,
-                              fontWeight: FontWeight.w500
-                              ),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
-              ),
               ElevatedButton(
                 onPressed: () {
                   _fetchPokemonData(_controller.text.toLowerCase());
@@ -400,78 +404,105 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                               SizedBox(
-                                  width: 270, 
+                                SizedBox(
+                                  width: 270,
                                   height: 160,
                                   child: Stack(
                                     alignment: Alignment.center,
                                     children: [
-                                      // sprite del suelo(grass)
+                                      // sprite del suelo (grass)
                                       Positioned(
                                         left: -30,
                                         bottom: 0,
                                         child: Transform.scale(
                                           scaleY: 1.8,
-                                          scaleX: 1.8, // Escala horizontal
+                                          scaleX: 1.8,
                                           child: Image.asset(
                                             'assets/battle_grass.png',
-                                            width: 300, 
+                                            width: 300,
                                             height: 110,
                                             fit: BoxFit.contain,
                                           ),
                                         ),
                                       ),
+
+                                      // NUEVA CAPA DE PASTO ADICIONAL
+                                      Positioned(
+                                        left:
+                                            -30, // misma posición para alinear con el otro pasto
+                                        bottom: 0,
+                                        child: Transform.scale(
+                                          scaleY: 1.0,
+                                          scaleX: 1.0,
+                                          child: Image.asset(
+                                            'assets/apipastopng.png',
+                                            width: 300,
+                                            height: 110,
+                                            fit: BoxFit.contain
+                                          ),
+                                        ),
+                                      ),
+
                                       // Sprite del Pokémon
                                       Positioned(
                                         bottom: 25,
                                         child: Image.network(
                                           _pokemonData['sprites']['front_default'],
-                                          width: 190, 
+                                          width: 190,
                                           height: 130,
                                           fit: BoxFit.contain,
-                                          errorBuilder: (context, error, stackTrace) =>
-                                            const Text('Imagen no disponible'),
+                                          errorBuilder:
+                                              (context, error, stackTrace) =>
+                                                  const Text(
+                                                    'Imagen no disponible',
+                                                  ),
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
                                 const SizedBox(height: 12),
-                                 const Divider(thickness: 2),
-                                 Text('Región: ${() {
-                                      switch (_pokemonData['id']) {
-                                        case int id when id >= 1 && id <= 151:
-                                          return 'Kanto';
-                                        case int id when id >= 152 && id <= 251:
-                                          return 'Johto';
-                                        case int id when id >= 252 && id <= 386:
-                                          return 'Hoenn';
-                                        case int id when id >= 387 && id <= 493:
-                                          return 'Sinnoh';
-                                        case int id when id >= 494 && id <= 649:
-                                          return 'Unova';
-                                        case int id when id >= 650 && id <= 721:
-                                          return 'Kalos';
-                                        case int id when id >= 722 && id <= 809:
-                                          return 'Alola';
-                                        case int id when id >= 899 && id <= 905:
-                                          return 'Galar';
-                                        case int id when id >= 906 && id <= 1025:
-                                          return 'Paldea';
-                                        default:
-                                          return 'Desconocida';
-                                      }
-                                    }()}'),
-                                
+                                const Divider(thickness: 2),
+                                Text(
+                                  'Región: ${() {
+                                    switch (_pokemonData['id']) {
+                                      case int id when id >= 1 && id <= 151:
+                                        return 'Kanto';
+                                      case int id when id >= 152 && id <= 251:
+                                        return 'Johto';
+                                      case int id when id >= 252 && id <= 386:
+                                        return 'Hoenn';
+                                      case int id when id >= 387 && id <= 493:
+                                        return 'Sinnoh';
+                                      case int id when id >= 494 && id <= 649:
+                                        return 'Unova';
+                                      case int id when id >= 650 && id <= 721:
+                                        return 'Kalos';
+                                      case int id when id >= 722 && id <= 809:
+                                        return 'Alola';
+                                      case int id when id >= 899 && id <= 905:
+                                        return 'Galar';
+                                      case int id when id >= 906 && id <= 1025:
+                                        return 'Paldea';
+                                      default:
+                                        return 'Desconocida';
+                                    }
+                                  }()}',
+                                ),
+
                                 Text('Nombre: ${_pokemonData['name']}'),
                                 Text('Altura: ${_pokemonData['height']}'),
                                 Text('Peso: ${_pokemonData['weight']}'),
                                 const Text('estadisticas:'),
                                 Column(
-                                  children: List.generate(_pokemonData['stats'].length, (index) {
-                                    return Text(
-                                        '- ${_pokemonData['stats'][index]['stat']['name']}: ${_pokemonData['stats'][index]['base_stat']}');
-                                      }),
+                                  children: List.generate(
+                                    _pokemonData['stats'].length,
+                                    (index) {
+                                      return Text(
+                                        '- ${_pokemonData['stats'][index]['stat']['name']}: ${_pokemonData['stats'][index]['base_stat']}',
+                                      );
+                                    },
+                                  ),
                                 ),
                                 const SizedBox(height: 8),
                                 const Divider(thickness: 2),
