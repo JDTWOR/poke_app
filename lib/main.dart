@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:poke_app/pokedex.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'PokeAPI Schedule 1',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -61,6 +62,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _controller = TextEditingController();
   Map<String, dynamic> _pokemonData = {};
   bool _isLoading = false;
+  List<String> _pokemonRecommendations = [];
+  String _currentSearchText = '';
 
   Future<void> _fetchPokemonData(String pokemonName) async {
     setState(() {
@@ -79,19 +82,19 @@ class _MyHomePageState extends State<MyHomePage> {
           Uri.parse(pokemonData['species']['url']),
         );
         final speciesData = jsonDecode(speciesResponse.body);
-          String category = 'Desconocido';
-          try {
-            final englishGenus = speciesData['genera'].firstWhere(
-              (g) => g['language']['name'] == 'en',
-              orElse: () => null,
-            );
-            if (englishGenus != null) {
-              category = englishGenus['genus'];
-            }
-          } catch (e) {
-            // Fallback si hay algún error
-            category = 'Desconocido';
+        String category = 'Desconocido';
+        try {
+          final englishGenus = speciesData['genera'].firstWhere(
+            (g) => g['language']['name'] == 'en',
+            orElse: () => null,
+          );
+          if (englishGenus != null) {
+            category = englishGenus['genus'];
           }
+        } catch (e) {
+          // Fallback si hay algún error
+          category = 'Desconocido';
+        }
 
         final typeUrl = pokemonData['types'][0]['type']['url'];
         final typeResponse = await http.get(Uri.parse(typeUrl));
@@ -124,6 +127,38 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Future<void> _fetchPokemonRecommendations(String searchText) async {
+    if (searchText.isEmpty) {
+      setState(() {
+        _pokemonRecommendations = [];
+      });
+      return;
+    }
+
+    final response = await http.get(
+      Uri.parse('https://pokeapi.co/api/v2/pokemon?limit=10000'),
+    );
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final List<String> allPokemonNames = List<String>.from(
+        data['results'].map((pokemon) => pokemon['name']),
+      );
+
+      final List<String> recommendations =
+          allPokemonNames
+              .where((name) => name.startsWith(searchText.toLowerCase()))
+              .toList();
+
+      setState(() {
+        _pokemonRecommendations = recommendations;
+      });
+    } else {
+      setState(() {
+        _pokemonRecommendations = ['Error al cargar recomendaciones'];
+      });
+    }
+  }
+
   /*void _incrementCounter() {
     setState(() { 
       // This call to setState tells the Flutter framework that something has
@@ -144,26 +179,77 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     var scaffold = Scaffold(
+  backgroundColor: Color.fromARGB(255, 163, 26, 26), //  Aquí va el color de fondo
+
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
             ListTile(
-              title: const Text('Pokédex'),
-        
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const Pokedex())),
-              ),
-              
+  tileColor: const Color.fromARGB(255, 255, 255, 255), // Fondo suave para el botón
+  shape: RoundedRectangleBorder( // Bordes redondeados
+    borderRadius: BorderRadius.circular(12),
+  ),
+  leading: Icon(Icons.catching_pokemon, color: Colors.redAccent), // Ícono al lado
+  title: const Text(
+    'Explorar Pokédex',
+    style: TextStyle(
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+      color: Colors.redAccent,
+    ),
+  ),
+  onTap: () => Navigator.of(context).push(
+    MaterialPageRoute(builder: (context) => const Pokedex()),
+  ),
+),
+//  Aquí agregas los nombres como simples textos
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  child: Text(
+    'Integrantes del grupo:',
+    style: TextStyle(fontWeight: FontWeight.bold),
+  ),
+),
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  child: Text('• Jhon Jairo Santamaria Porras'),
+),
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  child: Text('• Hernan David Cifuentes Arenas'),
+),
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  child: Text('• Jhon Deivid Rojas Rodriguez'),
+),
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  child: Text('• Samuel Rene Yepes Rivera'),
+),
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  child: Text('• Jose David Hernandez Navaja'),
+),
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  child: Text('• Juan David Castro Villarreal'),
+),
+const Padding(
+  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  child: Text('• Ronal Bejarano Barbosa'),
+),
+
           ],
         ),
       ),
       appBar: AppBar(
         leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
+          builder:
+              (context) => IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
         ),
         flexibleSpace: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
@@ -175,7 +261,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.red,
+                        Color.from(alpha: 1, red: 0.78, green: 0.125, blue: 0.125),
                         Colors.red,
                         Colors.white,
                         Colors.white,
@@ -204,12 +290,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   bottom: 0,
                   child: Center(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
                       decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.yellow,
-                          width: 3,
-                        ),
+                        border: Border.all(color: Colors.yellow, width: 3),
                         borderRadius: BorderRadius.circular(8),
                         // Opcional: añadir un fondo si quieres que el borde destaque más
                         // ignore: deprecated_member_use
@@ -240,7 +326,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       body: SingleChildScrollView(
-        
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -253,6 +338,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     vertical: 10,
                   ),
                   child: TextField(
+                    onChanged: (text) {
+                      _currentSearchText = text;
+                      _fetchPokemonRecommendations(text);
+                    },
                     controller: _controller,
                     style: const TextStyle(color: Colors.black),
                     decoration: InputDecoration(
@@ -267,14 +356,14 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: const Color.fromARGB(255, 255, 255, 255),
                       contentPadding: const EdgeInsets.symmetric(
                         vertical: 14.0,
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30.0),
                         borderSide: BorderSide(
-                          color: Colors.deepPurple.shade100,
+                          color: const Color.fromARGB(255, 218, 12, 12),
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
@@ -297,6 +386,40 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ),
+              if (_pokemonRecommendations.isNotEmpty)
+                SizedBox(
+                  height: 100,
+                  child: ListView.builder(
+                    itemCount: _pokemonRecommendations.length,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () {
+                          setState(() {
+                            _controller.text = _pokemonRecommendations[index];
+                            _currentSearchText = _pokemonRecommendations[index];
+                            _pokemonRecommendations =
+                                []; // Clear recommendations after selection
+                          });
+                          _fetchPokemonData(_controller.text.toLowerCase());
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 5,
+                          ),
+                          child: Text(
+                            _pokemonRecommendations[index],
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ElevatedButton(
                 onPressed: () {
                   _fetchPokemonData(_controller.text.toLowerCase());
@@ -330,42 +453,106 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                               SizedBox(
-                                width: 160,
-                                height: 130,
-                                child: Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    // Imagen del círculo (grass)
-                                    Positioned(
-                                      bottom: 0,
-                                      child: Image.asset(
-                                        'assets/battle_grass.png',
-                                        width: 190,
-                                        height: 50,
-                                        fit: BoxFit.contain,
+                                SizedBox(
+                                  width: 270,
+                                  height: 160,
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      // sprite del suelo (grass)
+                                      Positioned(
+                                        left: -30,
+                                        bottom: 0,
+                                        child: Transform.scale(
+                                          scaleY: 1.8,
+                                          scaleX: 1.8,
+                                          child: Image.asset(
+                                            'assets/battle_grass.png',
+                                            width: 300,
+                                            height: 110,
+                                            fit: BoxFit.contain,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                    // Sprite del Pokémon
-                                    Positioned(
-                                      bottom: 20,
-                                      child: Image.network(
-                                        _pokemonData['sprites']['front_default'],
-                                        width: 120,
-                                        height: 80,
-                                        fit: BoxFit.contain,
-                                        errorBuilder: (context, error, stackTrace) =>
-                                            const Text('Imagen no disponible'),
+
+                                      // NUEVA CAPA DE PASTO ADICIONAL
+                                      Positioned(
+                                        left:
+                                            -30, // misma posición para alinear con el otro pasto
+                                        bottom: 0,
+                                        child: Transform.scale(
+                                          scaleY: 1.0,
+                                          scaleX: 1.0,
+                                          child: Image.asset(
+                                            'assets/apipastopng.png',
+                                            width: 300,
+                                            height: 110,
+                                            fit: BoxFit.contain
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ],
+
+                                      // Sprite del Pokémon
+                                      Positioned(
+                                        bottom: 25,
+                                        child: Image.network(
+                                          _pokemonData['sprites']['front_default'],
+                                          width: 190,
+                                          height: 130,
+                                          fit: BoxFit.contain,
+                                          errorBuilder:
+                                              (context, error, stackTrace) =>
+                                                  const Text(
+                                                    'Imagen no disponible',
+                                                  ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
                                 const SizedBox(height: 12),
                                 const Divider(thickness: 2),
+                                Text(
+                                  'Región: ${() {
+                                    switch (_pokemonData['id']) {
+                                      case int id when id >= 1 && id <= 151:
+                                        return 'Kanto';
+                                      case int id when id >= 152 && id <= 251:
+                                        return 'Johto';
+                                      case int id when id >= 252 && id <= 386:
+                                        return 'Hoenn';
+                                      case int id when id >= 387 && id <= 493:
+                                        return 'Sinnoh';
+                                      case int id when id >= 494 && id <= 649:
+                                        return 'Unova';
+                                      case int id when id >= 650 && id <= 721:
+                                        return 'Kalos';
+                                      case int id when id >= 722 && id <= 809:
+                                        return 'Alola';
+                                      case int id when id >= 899 && id <= 905:
+                                        return 'Galar';
+                                      case int id when id >= 906 && id <= 1025:
+                                        return 'Paldea';
+                                      default:
+                                        return 'Desconocida';
+                                    }
+                                  }()}',
+                                ),
+
                                 Text('Nombre: ${_pokemonData['name']}'),
                                 Text('Altura: ${_pokemonData['height']}'),
                                 Text('Peso: ${_pokemonData['weight']}'),
+                                const Text('estadisticas:'),
+                                Column(
+                                  children: List.generate(
+                                    _pokemonData['stats'].length,
+                                    (index) {
+                                      return Text(
+                                        '- ${_pokemonData['stats'][index]['stat']['name']}: ${_pokemonData['stats'][index]['base_stat']}',
+                                      );
+                                    },
+                                  ),
+                                ),
                                 const SizedBox(height: 8),
                                 const Divider(thickness: 2),
                                 const Align(
