@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
         // and then invoke "hot reload" (save your changes or press the "hot
         // reload" button in a Flutter-supported IDE, or press "r" if you used
         // the command line to start the app).
-        //
+        //x
         // Notice that the counter didn't reset back to zero; the application
         // state is not lost during the reload. To reset the state, use hot
         // restart instead.
@@ -389,6 +389,7 @@ const Padding(
               if (_pokemonRecommendations.isNotEmpty)
                 SizedBox(
                   height: 100,
+                  child: Container(color: Colors.white, // Set the background color to white
                   child: ListView.builder(
                     itemCount: _pokemonRecommendations.length,
                     itemBuilder: (context, index) {
@@ -418,6 +419,7 @@ const Padding(
                         ),
                       );
                     },
+                  ),
                   ),
                 ),
               ElevatedButton(
